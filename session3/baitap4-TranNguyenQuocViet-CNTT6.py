@@ -25,8 +25,9 @@
   Code viết ra tối giản, mạch lạc và cực kỳ phổ biến trong Python.
 """
 
+# code đã sửa lại theo yêu cầu của thầy
 while True:
-
+    try:
         # Nhập dữ liệu đầu vào 
         quantity = int(input("Vui lòng nhập số lượng nhân sự mới trong tháng này: "))
         
@@ -39,4 +40,8 @@ while True:
         print(f"[THÀNH CÔNG] Đã ghi nhận yêu cầu cấp phát tài sản cho {quantity} nhân sự mới!")
         break  # Dừng vòng lặp và thoát ra ngoài
         
-print("---- CHƯƠNG TRÌNH KẾT THÚC ----");
+    except ValueError:
+        # Bắt lỗi khi người dùng nhập chữ cái, số thập phân hoặc ký tự đặc biệt
+        print("[LỖI] Dữ liệu không hợp lệ! Vui lòng chỉ nhập số nguyên.\n")
+
+print("---- CHƯƠNG TRÌNH KẾT THÚC ----")
