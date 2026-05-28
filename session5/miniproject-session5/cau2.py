@@ -10,4 +10,4 @@ while True:
         break;
     if user != -1:
         total_error += user
-    print(f'Tổng số hàng lỗi thu hồi trong ngày là {total_error}');
+print(f'Tổng số hàng lỗi thu hồi trong ngày là {total_error}');

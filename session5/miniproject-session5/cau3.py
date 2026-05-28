@@ -7,10 +7,10 @@ while True:
     if player < 0:
         print("Báo lỗi: Không được nhập số âm, vui lòng nhập lại!");
 
-    if player > inventory: 
+    elif player > inventory: 
         print('Kho không đủ hàng, vui lòng nhập lại');
     
-    if player > 0 and player <= 100:
+    else:
         value = inventory - player;
         print('=> Xuất kho thành công!');
         print(f'Tồn kho còn lại: {value}');
