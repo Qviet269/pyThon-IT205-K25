@@ -78,6 +78,7 @@ Kết thúc
 
 
 # 2. triển khai code
+# sửa lại
 raw_data = " eMP-001; nguyen van a ;0987654321;sale | Emp-002; Tran Thi B; 0912-345-678 ; mkt | EMP-003 ; le van C ; 0988abc123 ; IT "
 
 while True:
@@ -87,52 +88,70 @@ while True:
     print("3. Tìm kiếm nhân viên theo ID")
     print("4. Thoát chương trình")
 
-    choice = input('Chọn chức năng: ');
+    choice = input('Chọn chức năng: ')
 
     if choice == "1":
         print(raw_data)
+        
     elif choice == "2":
         employees = raw_data.split("|")
 
         for e in employees:
-            info = e.strip().split(";");
+            info = e.strip().split(";")
 
             e_id = info[0].strip().upper()
             fullname = info[1].strip().title()
             phone = info[2].strip().replace("-", "")
             department = info[3].strip().upper()
 
+            # Khắc phục lỗi hiển thị khi sai định dạng số điện thoại
             if phone.isdigit():
-                phone = f"****** {phone[-4:]}"
+                phone_display = f"****** {phone[-4:]}"
             else:
-                print('Invalid Format')
+                phone_display = "Invalid Format"
 
             print(f"""
-ID         : {e_id}
-Họ tên     : {fullname}
-Số điện thoại : {phone}
-Phòng ban  : {department}
+ID            : {e_id}
+Họ tên        : {fullname}
+Số điện thoại : {phone_display}
+Phòng ban     : {department}
 """)
+            
     elif choice == "3":
-
-        search_id = input("Nhập mã nhân viên cần tìm: ");
-
+        # Chuẩn hóa mã nhập vào (Xóa khoảng trắng, chuyển thành chữ hoa)
+        search_id = input("Nhập mã nhân viên cần tìm: ").strip().upper()
+        
         employees = raw_data.split("|")
+        found = False  # Biến cờ hiệu để kiểm tra trạng thái tìm thấy
 
         for e in employees:
-            info = e.strip().split(";");
+            info = e.strip().split(";")
 
             e_id = info[0].strip().upper()
             fullname = info[1].strip().title()
             phone = info[2].strip().replace("-", "")
             department = info[3].strip().upper()
+            
             if search_id == e_id:
+                found = True
+                if phone.isdigit():
+                    phone_display = f"****** {phone[-4:]}"
+                else:
+                    phone_display = "Invalid Format"
+                    
                 print(f"""
-ID         : {e_id}
-Họ tên     : {fullname}
-Số điện thoại : {phone}
-Phòng ban  : {department}
+Kết quả tìm thấy:
+ID            : {e_id}
+Họ tên        : {fullname}
+Số điện thoại : {phone_display}
+Phòng ban     : {department}
 """)
+                break  # Dừng vòng lặp khi đã tìm thấy nhân viên
+                
+        # Thông báo khi không tìm thấy nhân viên
+        if not found:
+            print(f"Không tìm thấy nhân viên có mã: {search_id}")
+            
     elif choice == "4":
         print("Thoát chương trình")
         break
