@@ -1,5 +1,4 @@
 staff_list = []
-staff_id = 100
 
 while True:
     print("""
