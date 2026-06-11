@@ -63,7 +63,7 @@ def declaration_bus (bus_list):
 
     number_seats_out = total_seats - empty_seats
     current_revenue = price_ticket * number_seats_out
-
+ 
     if empty_seats == 0:
         status = 'Hết vé'
     elif empty_seats < 0.15 * total_seats:

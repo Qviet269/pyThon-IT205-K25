@@ -21,51 +21,60 @@ def show_list (player_list):
     for i, v in enumerate(player_list):
         print(f"{v.get('player_id'):<5}| {v.get('fullname'):<20}| {v.get('matches'):<10}| {v.get('goal'):<15}| {v.get('construction'):<10}| {v.get('efficiency', "Chưa có dữ liệu"):<15}| {v.get('classify',"Chưa có dữ liệu"):<25}")
 
-def validate_input (prompt: str, type_input: str = "str"):
+def validate_input (prompt: str, type_input: str ="str"):
     while True:
-        users_input = input(prompt)
+        users = input(prompt)
 
-        if not users_input:
-            print("Dữ liệu không được để trống!")
+        if not users:
+            print("Dữ liệu không được trống! Nhập lại")
             continue
 
         if type_input == "int":
             try:
-                value = int(users_input)
+                value = int(users)
                 if value < 0:
-                    print("Giá trị phải là số nguyên và không được âm!")
+                    print("Số nguyên phải lớn hơn hoặc bằng 0! nhập lại")
                     continue
                 return value
             except ValueError:
                 print("Dữ liệu không hợp lệ!")
                 continue
-        
-        
-        return users_input
-    
+
+        if type_input == "matches":
+            try:
+                value = int(users)
+                if 0 > value > 50:
+                    print("Số trận thi đấu phải nằm trong khoảng 0 đến 50")
+                    continue
+                return value
+            except ValueError:
+                print("Dữ liệu không hợp lệ!")
+                continue
+        return users
+
 def add_player (player_list):
     if not player_list:
         print("Danh sách cầu thủ đang rỗng")
         return
-    
     while True:
-        new_player_id = validate_input("Nhập vào mã cầu thủ: ")
+        input_id = validate_input("Nhập mã CT: ")
         for i, v in enumerate(player_list):
-            if new_player_id.upper() == v.get("player_id").upper():
-                print("Mã cầu thủ đã tồn tại!")
+            if input_id.upper() == v.get("player_id").upper():
+                print("Mã CT đã tồn tại! vui lòng nhập lại")
                 break
         else:
             break
-    fullname = validate_input("Nhập họ tên cầu thủ: ")
-    matches = validate_input("Nhập vào số trận đấu", "matches") 
+    input_name = validate_input("Nhập tên cầu thủ: ")
+    matches = validate_input("Nhập số trận: ", "matches")
     goal = validate_input("Nhập số bàn thắng: ", "int")
-    construction = validate_input("Nhập số kiến tạo: ", "int")
-    efficiency = (matches * 1) + (goal * 3) + (construction * 2)
-    classify = classify_player(efficiency)
+    construction = validate_input("Nhập số lần kiến tạo: ", "int")
+    efficiency = (matches * 1) + (goal * 2) + (construction * 3)
 
-    new = {
-        "player_id": new_player_id,
-        "fullname": fullname,
+    classify = classify_player (efficiency)
+
+    new_player = {
+        "player_id": input_id,
+        "fullname": input_name,
         "matches": matches,
         "goal": goal,
         "construction": construction,
@@ -73,24 +82,113 @@ def add_player (player_list):
         "classify": classify
     }
 
-    player_list.append(new)
+    player_list.append(new_player)
     return
+
 
 def classify_player (efficiency):
 
     if efficiency < 15:
-        return  "Cần thanh lý"
-    elif efficiency < 30:
-        return  "Dự bị chiến lược"
-    elif efficiency < 50:
-        return  "Trụ cột đội bóng"
+        return "Cần thanh lý"
+    elif 15 <= efficiency <= 30:
+        return "Dự bị"
+    elif 30 <= efficiency <= 50:
+        return "Trụ cột"
     else:
-        return  "Ngôi sao đẳng cấp"
+        return "Ngôi sao"
+    
+def update_player (player_list):
+    if not player_list:
+        print("Danh sách cầu thủ đang rỗng")
+        return
+    
+    input_id = validate_input("Nhập mã CT cần cập nhật: ")
+    for i, v in enumerate(player_list):
+        if input_id.upper() == v.get("player_id").upper():
+            v["matches"] = validate_input("Cập nhật lại số trận: ", "matches")
+            v["goal"] = validate_input("Cập nhật lại bàn thắng: ", "int")
+            v["construction"] = validate_input("Cập nhật lại số lần kiến tạo: ", "int")
 
+            v["efficiency"] = (v["matches"] * 1) + (v["goal"] * 2) + (v["construction"] * 3)
+            v["classify"] = classify_player (v["efficiency"])
+            return
+    else:
+        print("Không tìm thấy mã CT!")
+        return
 
-                
+def delete_player (player_list):
+    if not player_list:
+        print("Danh sách cầu thủ đang rỗng")
+        return
+    
+    input_id = validate_input("Nhập mã CT muốn xóa: ")
+    for i, v in enumerate(player_list):
+        if input_id.upper() == v.get("player_id").upper():
+            print("Bạn có chắc chắn muốn xóa cầu thủ này khỏi danh sách không? (Y/N)")
+            mini_choice = validate_input("")
+            if mini_choice.upper() == "Y":
+                print("Bạn đã xóa thành công!")
+                player_list.pop(i)
+                return
+            else:
+                print("Bạn đã không đồng ý!")
+                return
+    else:
+        print("Không tìm thấy mã cầu thủ!")
+        return
 
+def search_player (player_list):
+    if not player_list:
+        print("Danh sách cầu thủ đang rỗng")
+        return
+    
+    flag = False
+    search = validate_input("Nhập mã CT hoặc tên CT bạn muốn tìm: ")
+    for i, v in enumerate(player_list):
+        if search.upper() == v.get("player_id").upper() or search.title() in v.get("fullname").title():
+            flag = True
+            print(f"{v.get('player_id'):<5}| {v.get('fullname'):<20}| {v.get('matches'):<10}| {v.get('goal'):<15}| {v.get('construction'):<10}| {v.get('efficiency', "Chưa có dữ liệu"):<15}| {v.get('classify',"Chưa có dữ liệu"):<25}")
 
+    if not flag:
+        print("Không tìm thấy cầu thủ!")
+    return    
+
+def statistics_player (player_list):
+    if not player_list:
+        print("Danh sách cầu thủ đang rỗng")
+        return
+    classify_star = 0
+    classify_classify = 0
+    classify_reserve = 0
+    reserve_liq = 0
+
+    
+ 
+    for i, v in enumerate(player_list):
+        if v.get("classify") == "Cần thanh lý":
+            reserve_liq += 1
+        elif v.get("classify") == "Ngôi sao":
+            classify_star += 1
+        elif v.get("classify") == "Trụ cột":
+            classify_classify += 1
+        else: 
+                classify_reserve += 1
+
+    print(f"Ngôi sao: {classify_star}")
+    print(f"Cần thành lý: {reserve_liq}")
+    print(f"Trụ cột: {classify_classify}")
+    print(f"Dự bị: {classify_reserve}")
+    return
+
+def auto_player(player_list):
+    if not player_list:
+        print("Danh sách cầu thủ đang rỗng")
+        return
+    
+    for i, v in enumerate(player_list):
+        v["efficiency"] = (v["matches"] * 1) + (v["goal"] * 2) + (v["construction"] * 3)
+        v["classify"] = classify_player (v["efficiency"])
+        
 def main():
     player_list = [
         {
@@ -98,7 +196,7 @@ def main():
             "fullname": "Nguyen Quang Hải",
             "matches": 10,
             "goal": 5,
-            "construction": 4,
+            "construction": 4
         }
     ]
 
@@ -115,13 +213,18 @@ def main():
                 print("----------- Tiếp nhận cầu thủ ------------")
                 add_player (player_list)
             case "3":
-                print()
+                print("------ Cập nhật thông tin --------")
+                update_player (player_list)
             case "4":
-                print()
+                print("-------- Xóa cầu thủ ---------")
+                delete_player (player_list)
+                
             case "5":
-                print()
+                print("-------- Tìm Cầu thủ -----------")
+                search_player (player_list)
             case "6":
-                print()
+                print("------- Thống kê --------")
+                statistics_player (player_list)
             case "7":
                 print()
             case "8":
